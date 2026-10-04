@@ -1,0 +1,67 @@
+<div class="requests-table-container" dir="rtl">
+  @if (results(); as data) {
+    @if (data.items.length > 0) {
+      <table class="requests-table">
+        <thead>
+          <tr>
+            <th>מזהה</th>
+            <th>מספר בקשה</th>
+            <th>סטטוס</th>
+            <th>סוג בקשה</th>
+            <th>מזהה לקוח</th>
+            <th>מזהה בעלים</th>
+            <th>מזהה משתמש משויך</th>
+            <th>תאריך יצירה</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of data.items; track item.id) {
+            <tr>
+              <td>{{ item.id }}</td>
+              <td>{{ item.requestNumber }}</td>
+              <td>
+                <span class="status-badge status-{{ item.status }}">
+                  {{ getStatusLabel(item.status) }}
+                </span>
+              </td>
+              <td>{{ getTypeLabel(item.requestType) }}</td>
+              <td>{{ item.customerId }}</td>
+              <td>{{ item.ownerId }}</td>
+              <td>{{ item.assignedToUserId ?? '-' }}</td>
+              <td>{{ item.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      @if (data.totalPages > 1) {
+        <div class="pagination">
+          <button 
+            type="button"
+            class="btn btn-pagination"
+            [disabled]="!data.hasPreviousPage"
+            (click)="onPageClick(data.pageNumber - 1)">
+            הקודם
+          </button>
+          
+          <span class="page-info">
+            עמוד {{ data.pageNumber }} מתוך {{ data.totalPages }}
+          </span>
+          
+          <button 
+            type="button"
+            class="btn btn-pagination"
+            [disabled]="!data.hasNextPage"
+            (click)="onPageClick(data.pageNumber + 1)">
+            הבא
+          </button>
+        </div>
+      }
+    } @else {
+      <div class="no-results">
+        לא נמצאו תוצאות התואמות לחיפוש.
+      </div>
+    }
+  }
+</div>

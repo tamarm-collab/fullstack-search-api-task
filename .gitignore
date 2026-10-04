@@ -1,0 +1,47 @@
+# Build outputs
+bin/
+obj/
+out/
+
+# IDE specific files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet packages
+packages/
+*.nupkg
+
+# Test results
+TestResults/
+*.trx
+
+# Angular build outputs
+requests-web/dist/
+requests-web/.angular/
+requests-web/node_modules/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Kiro internal files (keep specs for submission)
+.kiro/sessions/
+.kiro/steering/
+.kiro/hooks/
+
+# Playwright MCP (external tool logs)
+.playwright-mcp/
+
+# Local settings
+appsettings.Development.json
+local.settings.json
+
+# Rider/JetBrains
+.idea/

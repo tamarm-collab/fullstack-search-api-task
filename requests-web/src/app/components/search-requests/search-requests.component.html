@@ -1,0 +1,142 @@
+<div class="search-container" dir="rtl">
+  <h2 class="search-title">חיפוש בקשות</h2>
+
+  <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="search-form">
+    <!-- Row 1: Request Number, Status, Request Type -->
+    <div class="form-row">
+      <div class="form-group">
+        <label for="requestNumber">מספר בקשה</label>
+        <input 
+          id="requestNumber" 
+          type="text" 
+          formControlName="requestNumber"
+          placeholder="חיפוש חלקי..."
+          class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="status">סטטוס</label>
+        <select 
+          id="status" 
+          formControlName="status"
+          class="form-control">
+          <option [ngValue]="null">הכל</option>
+          @for (status of statusOptions; track status.value) {
+            <option [ngValue]="status.value">{{ status.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="requestType">סוג בקשה</label>
+        <select 
+          id="requestType" 
+          formControlName="requestType"
+          class="form-control">
+          <option [ngValue]="null">הכל</option>
+          @for (type of typeOptions; track type.value) {
+            <option [ngValue]="type.value">{{ type.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Row 2: Date Range -->
+    <div class="form-row">
+      <div class="form-group">
+        <label for="dateFrom">מתאריך</label>
+        <input 
+          id="dateFrom" 
+          type="date" 
+          formControlName="dateFrom"
+          class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="dateTo">עד תאריך</label>
+        <input 
+          id="dateTo" 
+          type="date" 
+          formControlName="dateTo"
+          class="form-control">
+      </div>
+    </div>
+
+    <!-- Row 3: Sort Options -->
+    <div class="form-row">
+      <div class="form-group">
+        <label for="sortBy">מיון לפי</label>
+        <select 
+          id="sortBy" 
+          formControlName="sortBy"
+          class="form-control">
+          @for (field of sortFieldOptions; track field.value) {
+            <option [value]="field.value">{{ field.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="sortDirection">כיוון מיון</label>
+        <select 
+          id="sortDirection" 
+          formControlName="sortDirection"
+          class="form-control">
+          @for (direction of sortDirectionOptions; track direction.value) {
+            <option [value]="direction.value">{{ direction.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="loading$ | async">
+        @if (loading$ | async) {
+          <span class="spinner"></span>
+          טוען...
+        } @else {
+          חיפוש
+        }
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="onClear()" [disabled]="loading$ | async">
+        נקה
+      </button>
+    </div>
+  </form>
+
+  <!-- Error Message -->
+  @if (error$ | async; as errorMessage) {
+    <div class="error-message">
+      <span class="error-icon">⚠</span>
+      {{ errorMessage }}
+    </div>
+  }
+
+  <!-- Loading Indicator -->
+  @if (loading$ | async) {
+    <div class="loading-overlay">
+      <div class="loading-spinner"></div>
+      <span>טוען...</span>
+    </div>
+  }
+
+  <!-- Results Section -->
+  @if (results$ | async; as results) {
+    <div class="results-section">
+      <div class="results-header">
+        <span class="results-count">
+          נמצאו {{ results.totalCount }} תוצאות
+          @if (results.totalPages > 1) {
+            (עמוד {{ results.pageNumber }} מתוך {{ results.totalPages }})
+          }
+        </span>
+      </div>
+
+      <app-requests-table 
+        [results]="results"
+        (pageChange)="onPageChange($event)">
+      </app-requests-table>
+    </div>
+  }
+</div>
