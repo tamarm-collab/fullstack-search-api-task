@@ -261,7 +261,6 @@ private static readonly HashSet<string> AllowedSortFields = new(StringComparer.O
 |------|--------|-----------|
 | אימות אמיתי (JWT/OAuth) | גבוהה | 4-6 שעות |
 | מסד נתונים אמיתי (SQL Server) | גבוהה | 2-3 שעות |
-| יצוא ל-Excel/CSV | בינונית | 2-3 שעות |
 | Caching עם Redis | בינונית | 3-4 שעות |
 | Logging מפורט (Serilog) | נמוכה | 1-2 שעות |
 

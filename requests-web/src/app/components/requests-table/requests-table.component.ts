@@ -4,14 +4,6 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { PagedResult, RequestDto, RequestStatus, RequestType } from '../../models';
 
 /**
- * Sort change event payload.
- */
-export interface SortChangeEvent {
-  sortBy: string;
-  sortDirection: 'asc' | 'desc';
-}
-
-/**
  * Status label map - Hebrew labels for request statuses.
  */
 const STATUS_LABELS: Record<RequestStatus, string> = {
@@ -49,9 +41,6 @@ export class RequestsTableComponent {
 
   /** Emits when page changes */
   readonly pageChange = output<number>();
-
-  /** Emits when sort changes */
-  readonly sortChange = output<SortChangeEvent>();
 
   /**
    * Get Hebrew label for a status value.

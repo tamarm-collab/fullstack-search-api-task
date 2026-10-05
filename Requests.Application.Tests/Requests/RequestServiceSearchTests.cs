@@ -153,7 +153,7 @@ public class RequestServiceSearchTests
         };
 
         // Act
-        var result = await service.SearchAsync(query, currentUserId: 1, isAdmin: true);
+        var result = await service.SearchAsync(query, currentUserId: 1, isAdministrator: true);
 
         // Assert
         Assert.Single(result.Items);
@@ -199,7 +199,7 @@ public class RequestServiceSearchTests
         var query = new SearchRequestQuery { PageNumber = pageNumber, PageSize = pageSize };
 
         // Act
-        var result = await service.SearchAsync(query, currentUserId: 1, isAdmin: true);
+        var result = await service.SearchAsync(query, currentUserId: 1, isAdministrator: true);
 
         // Assert
         Assert.Equal(totalRecords, result.TotalCount);

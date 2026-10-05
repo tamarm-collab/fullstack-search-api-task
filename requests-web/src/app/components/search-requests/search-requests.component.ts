@@ -110,7 +110,7 @@ export class SearchRequestsComponent implements OnInit {
   private initForm(): void {
     this.searchForm = this.fb.group({
       requestNumber: [''],
-      status: [null],
+      statuses: [[]],  // Multi-select - array of statuses
       requestType: [null],
       dateFrom: [''],
       dateTo: [''],
@@ -166,7 +166,7 @@ export class SearchRequestsComponent implements OnInit {
   onClear(): void {
     this.searchForm.reset({
       requestNumber: '',
-      status: null,
+      statuses: [],  // Multi-select - empty array
       requestType: null,
       dateFrom: '',
       dateTo: '',
@@ -186,6 +186,38 @@ export class SearchRequestsComponent implements OnInit {
   onPageChange(pageNumber: number): void {
     this.searchForm.patchValue({ pageNumber });
     this.executeSearch();
+  }
+
+  /**
+   * Toggle a status in the multi-select array.
+   * @param status The status to toggle
+   * @param event The checkbox change event
+   */
+  onStatusToggle(status: RequestStatus, event: Event): void {
+    const checkbox = event.target as HTMLInputElement;
+    const currentStatuses: RequestStatus[] = this.searchForm.get('statuses')?.value || [];
+    
+    if (checkbox.checked) {
+      // Add status if not already present
+      if (!currentStatuses.includes(status)) {
+        this.searchForm.patchValue({ statuses: [...currentStatuses, status] });
+      }
+    } else {
+      // Remove status
+      this.searchForm.patchValue({ 
+        statuses: currentStatuses.filter(s => s !== status) 
+      });
+    }
+  }
+
+  /**
+   * Check if a status is currently selected.
+   * @param status The status to check
+   * @returns True if the status is selected
+   */
+  isStatusSelected(status: RequestStatus): boolean {
+    const currentStatuses: RequestStatus[] = this.searchForm.get('statuses')?.value || [];
+    return currentStatuses.includes(status);
   }
 
   /**
@@ -226,9 +258,9 @@ export class SearchRequestsComponent implements OnInit {
       query.requestNumber = formValue.requestNumber.trim();
     }
 
-    // Single status - convert to array if selected (already a number with [ngValue])
-    if (formValue.status !== null) {
-      query.statuses = [formValue.status];
+    // Multi-status selection - pass array directly if not empty
+    if (formValue.statuses?.length) {
+      query.statuses = formValue.statuses;
     }
 
     if (formValue.requestType !== null) {

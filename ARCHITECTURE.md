@@ -88,9 +88,9 @@ sequenceDiagram
         NS->>MQ: 5a. ACK - ההודעה טופלה
     else Notification Service לא זמין
         NS--xMQ: 4b. כישלון
-        MQ->>MQ: 5b. Retry אחרי 30 שניות
+        MQ->>MQ: 5b. Retry עם Exponential Backoff
         MQ->>NS: 6b. ניסיון נוסף
-        Note over MQ,NS: עד 5 ניסיונות
+        Note over MQ,NS: עד 5 ניסיונות (1s→2s→4s→8s)
         MQ->>DLQ: 7b. אחרי 5 כישלונות → DLQ
     end
 ```
@@ -136,6 +136,27 @@ sequenceDiagram
 - התראה לצוות התפעול
 - אפשרות לשליחה מחדש ידנית
 - ניתוח לזיהוי בעיות חוזרות
+
+### מימוש Idempotency
+
+כדי למנוע שליחת Notification כפולה כאשר אותה הודעה מגיעה יותר מפעם אחת:
+
+| רכיב | תפקיד |
+|------|-------|
+| **טבלת ProcessedEvents** | שומרת את ה-`eventId` של כל הודעה שטופלה בהצלחה |
+| **בדיקה לפני עיבוד** | Notification Service בודק אם ה-`eventId` כבר קיים בטבלה |
+| **TTL** | רשומות ישנות נמחקות אחרי 7 ימים (מספיק זמן לכיסוי Retry cycles) |
+
+```sql
+-- טבלת Idempotency
+CREATE TABLE ProcessedEvents (
+    EventId UNIQUEIDENTIFIER PRIMARY KEY,
+    ProcessedAt DATETIME2 DEFAULT GETUTCDATE()
+);
+
+-- מחיקת רשומות ישנות (Job יומי)
+DELETE FROM ProcessedEvents WHERE ProcessedAt < DATEADD(DAY, -7, GETUTCDATE());
+```
 
 ---
 
